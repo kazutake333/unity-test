@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GoalEventScript : MonoBehaviour {
+    GameObject timerText;
+    TimerScript timerScript;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    // Use this for initialization
+    void Start () {
+        timerText = GameObject.Find("TimerText");
+        timerScript = timerText.GetComponent<TimerScript>();
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -23,5 +27,9 @@ public class GoalEventScript : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("すり抜けた！");
+        float a = timerScript.countTime;
+        Debug.Log(a);
+        // タイマー情報を次のシーンへ渡す
+        // リザルトシーンへ遷移
     }
 }
