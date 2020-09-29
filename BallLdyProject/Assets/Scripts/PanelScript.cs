@@ -2,22 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 操作マニュアルデータ格納Bean
+/// </summary>
+public class ManipulationCanvasBean
+{
+    /// <summary>
+    /// 透明度[0f~1.0f]
+    /// 数字が小さい程、透明になる。
+    /// </summary>
+    private float clearLevel;
+    /// <summary>
+    /// キー押下判定フラグ
+    /// </summary>
+    private bool inputKeyDowned;
+
+    public void setClearLevel(float clearLevel)
+    {
+        this.clearLevel = clearLevel;
+    }
+
+    public float getClearLevel()
+    {
+        return this.clearLevel;
+    }
+
+    public void setInputKeyDowned(bool inputKeyDowned)
+    {
+        this.inputKeyDowned = inputKeyDowned;
+    }
+
+    public bool isInputKeyDowned()
+    {
+        return this.inputKeyDowned;
+    }
+}
+
 public class PanelScript : MonoBehaviour {
-    //Material m_Material;
-    [SerializeField] private CanvasGroup a;
-    float clearLevel = 1.0f;
-    // [visibled / none]
-    string displayStates;
-    bool fadeOutSwitch = false;
+    /// <summary>
+    /// ManipulationCanvasオブジェクト
+    /// </summary>
+    [SerializeField] private CanvasGroup OBJECT_MANIPULATION_CANVAS;
+
+    ManipulationCanvasBean bean;
 
     // Use this for initialization
     void Start () {
-        //m_Material = GetComponent<Renderer>().material;
-        //m_Material.color = Color.red;
-        //m_Material.color = new Color(0, 0, 0, 1.0f);
-
-        //Debug.Log("動く？");
-        displayStates = "visibled";
+        this.bean = new ManipulationCanvasBean();
+        bean.setInputKeyDowned(false);
+        bean.setClearLevel(1.0f);
     }
 	
 	// Update is called once per frame
@@ -28,43 +61,75 @@ public class PanelScript : MonoBehaviour {
             || Input.GetKeyDown(KeyCode.LeftArrow)
             || Input.GetKeyDown(KeyCode.M))
         {
-            fadeOutSwitch = true;
+            bean.setInputKeyDowned(true);
         }
 
-        if (displayStates.Equals("visibled") && fadeOutSwitch && 0f <= clearLevel)
+        if (Input.GetKeyUp(KeyCode.UpArrow)
+            || Input.GetKeyUp(KeyCode.DownArrow)
+            || Input.GetKeyUp(KeyCode.RightArrow)
+            || Input.GetKeyUp(KeyCode.LeftArrow)
+            || Input.GetKeyUp(KeyCode.M))
         {
-            //StartCoroutine("Corou3");
-            Debug.Log("clearLevel_bef：[" + clearLevel + "]");
-            clearLevel -= 0.1f;
-            a.alpha = clearLevel;
-            Debug.Log("clearLevel_aft：[" + clearLevel + "]");
+            bean.setInputKeyDowned(false);
         }
-        else if (fadeOutSwitch)
+
+        FadeSwitch(bean);
+    }
+
+    /// <summary>
+    /// 操作キーが入力されている間は操作マニュアルを表示させない
+    /// </summary>
+    /// <param name="flag"></param>
+    /// <param name="value"></param>
+    private void FadeSwitch(ManipulationCanvasBean bean)
+    {
+        // キーが押されている間
+        if (bean.isInputKeyDowned())
         {
-            fadeOutSwitch = false;
-            clearLevel = 0f;
-            displayStates = "none";
-            Debug.Log("clearLevel：[" + clearLevel + "]");
-            //Debug.Log("clearLevel：[" + clearLevel + "]");
-            //Debug.Log("0になった");
+            FadeActionFatdeOut(bean);
+        }
+        // 押されたキーが離される
+        else
+        {
+            FadeActionFatdeIn(bean);
+        }
+    }
+
+    /// <summary>
+    /// フェードアウト実行
+    /// </summary>
+    /// <param name="value">透明度[0f~1.0f]</param>
+    private void FadeActionFatdeOut(ManipulationCanvasBean bean)
+    {
+        float value = bean.getClearLevel();
+        if (0f <= value)
+        {
+            value -= 0.1f;
         }
         else
         {
-            Debug.Log("それ以外");
-            Debug.Log("clearLevel：[" + clearLevel + "]");
+            value = 0f;
         }
+        bean.setClearLevel(value);
+        OBJECT_MANIPULATION_CANVAS.alpha = bean.getClearLevel();
     }
-    //コルーチン関数を定義
-    private IEnumerator Corou3() //コルーチン関数の名前
-    {
-        yield return new WaitForSeconds(1.0f);
-        clearLevel -= 0.1f;
-        a.alpha = clearLevel;
-        Debug.Log("clearLevel：[" + clearLevel + "]");
 
-        //コルーチンの内容
-        //Debug.Log("a");
-        //yield return null;
-        //Debug.Log("b");
+    /// <summary>
+    /// フェードイン実行
+    /// </summary>
+    /// <param name="value">透明度[0f~1.0f]</param>
+    private void FadeActionFatdeIn(ManipulationCanvasBean bean)
+    {
+        float value = bean.getClearLevel();
+        if (value <= 1.0f)
+        {
+            value += 0.1f;
+        }
+        else
+        {
+            value = 1.0f;
+        }
+        bean.setClearLevel(value);
+        OBJECT_MANIPULATION_CANVAS.alpha = bean.getClearLevel();
     }
 }
