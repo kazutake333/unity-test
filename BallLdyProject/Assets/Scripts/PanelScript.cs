@@ -19,20 +19,34 @@ public class PanelScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.UpArrow)
-            || Input.GetKeyDown(KeyCode.DownArrow)
-            || Input.GetKeyDown(KeyCode.RightArrow)
-            || Input.GetKeyDown(KeyCode.LeftArrow)
-            || Input.GetKeyDown(KeyCode.M))
+        Hashtable ht = new Hashtable();
+        ht["KEY_DOWNED_UP"] = (bool)false;
+        ht["KEY_DOWNED_DOWN"] = (bool)false;
+        ht["KEY_DOWNED_RIGHT"] = (bool)false;
+        ht["KEY_DOWNED_LEFT"] = (bool)false;
+        ht["KEY_DOWNED_M"] = (bool)false;
+
+        // 押下キー情報をHashtableへ一時格納
+        if (Input.GetKey(KeyCode.UpArrow)) ht["KEY_DOWNED_UP"] = (bool)true;
+        if (Input.GetKey(KeyCode.DownArrow)) ht["KEY_DOWNED_DOWN"] = (bool)true;
+        if (Input.GetKey(KeyCode.RightArrow)) ht["KEY_DOWNED_RIGHT"] = (bool)true;
+        if (Input.GetKey(KeyCode.LeftArrow)) ht["KEY_DOWNED_LEFT"] = (bool)true;
+        if (Input.GetKey(KeyCode.M)) ht["KEY_DOWNED_M"] = (bool)true;
+
+        if ((bool)ht["KEY_DOWNED_UP"]
+            || (bool)ht["KEY_DOWNED_DOWN"]
+            || (bool)ht["KEY_DOWNED_RIGHT"]
+            || (bool)ht["KEY_DOWNED_LEFT"]
+            || (bool)ht["KEY_DOWNED_M"])
         {
             bean.setInputKeyDowned(true);
         }
 
-        if (Input.GetKeyUp(KeyCode.UpArrow)
-            || Input.GetKeyUp(KeyCode.DownArrow)
-            || Input.GetKeyUp(KeyCode.RightArrow)
-            || Input.GetKeyUp(KeyCode.LeftArrow)
-            || Input.GetKeyUp(KeyCode.M))
+        if (!(bool)ht["KEY_DOWNED_UP"]
+            && !(bool)ht["KEY_DOWNED_DOWN"]
+            && !(bool)ht["KEY_DOWNED_RIGHT"]
+            && !(bool)ht["KEY_DOWNED_LEFT"]
+            && !(bool)ht["KEY_DOWNED_M"])
         {
             bean.setInputKeyDowned(false);
         }
