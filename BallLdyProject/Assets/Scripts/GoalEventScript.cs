@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoalEventScript : MonoBehaviour {
     GameObject timerText;
@@ -27,9 +28,22 @@ public class GoalEventScript : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("すり抜けた！");
-        float a = timerScript.countTime;
-        Debug.Log(a);
+        //float a = timerScript.countTime;
+        //Debug.Log(a);
         // タイマー情報を次のシーンへ渡す
+        SceneManager.sceneLoaded += GameSceneLoaded;
         // リザルトシーンへ遷移
+        SceneManager.LoadScene("BallLdyResult_01");
+    }
+    private void GameSceneLoaded(Scene next, LoadSceneMode mode)
+    {
+        // シーン切り替え後のスクリプトを取得
+        var gameManager = GameObject.FindWithTag("GameManager").GetComponent<ResultSetScript>();
+
+        // データを渡す処理
+        gameManager.resultTime = timerScript.countTime;
+
+        // イベントから削除
+        SceneManager.sceneLoaded -= GameSceneLoaded;
     }
 }
